@@ -1,12 +1,21 @@
 require("dotenv").config();
+const monstersRouter = require("./routes/monsters");
+const bodyParser = require('body-parser')
 
-const {Pool} = require('pg');
-const pool = new Pool({user: process.env.user, host:process.env.host, database:process.env.database, password:process.env.password, port:process.env.port});
 
-pool.query('SELECT * FROM monsters', (err , res) =>
-{
-if(err){
-    return console.log(err);
-}
-console.log(res);
-})
+const express = require("express");
+const app = express();
+app.use(express.json());
+app.use(bodyParser.json()) // for parsing application/json
+
+
+app.set("port", process.env.port || 3000);
+
+app.get("/", (req, res, next) => {
+  res.send("<h1>Hello world<h1>");
+});
+app.use("/monsters", monstersRouter);
+
+app.listen(app.get("port"), (server) => {
+  console.info(`Server listen on port ${app.get("port")}`);
+});
