@@ -49,12 +49,32 @@ router.post('/', (req, res, next)=>{
 router.put('/:id', (req, res, next)=>{
     const {id} = req.params;
     const {name , personality} = req.body
-    pool.query(`UPDATE monsters SET name=('${name}'),personality=('${personality}') WHERE id=${id}`, (error, response)=>{
+    const keys = [name,personality];
+    const fields = [];
+
+    keys.forEach((key) =>{
+    if(key)
+     {fields.push([key])}
+    })
+    fields.forEach((field) => {
+        pool.query(`UPDATE monsters SET ${field}='${req.body.field}' WHERE id=${id}`,(error, response)=>{
+            if (error) {
+                return console.log(error);
+              }
+              res.json(response.rows);
+            });
+    })
+
+    
+})
+
+router.delete('/:id', (req, res, next)=>{
+    const {id}= req.params;
+    pool.query(`DELETE FROM monsters gWHERE id=${id}`,(error, response)=>{
         if (error) {
             return console.log(error);
           }
           res.json(response.rows);
         });
 })
-
 module.exports = router;
